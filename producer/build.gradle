@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'idea'
 }
 
@@ -11,26 +11,41 @@ repositories {
 }
 
 sourceSets {
+    main {
+        java {
+            srcDir "src/foo/java"
+        }
+    }
+}
+
+sourceSets {
     foo {
         java {
             srcDir 'src/foo/java'
         }
     }
-    main {
-        compileClasspath += files(foo.output.classesDirs)  //This helps if we are using FooApi in the same module as MainApi i.e. in Tester class
-                                                            // i.e. gradlewe compileJava works for producer
-                                                            // TODO but ./gradle consumer:compileJava still does not work in the consumer
-                                                            // may be we need to export a configuration
-    }
+
+//    main {
+//        compileClasspath += files(foo.output.classesDirs)  //This helps if we are using FooApi in the same module as MainApi i.e. in Tester class
+//                                                            // i.e. gradlewe compileJava works for producer
+//                                                            // TODO but ./gradle consumer:compileJava still does not work in the consumer
+//                                                            // If we don't have code on line #13 where we adding src/foo/bar to main's java, this is needed
+                                                                // but with  that code, this is not needed
+//    }
 }
 
 idea {
     module {
-        sourceDirs += sourceSets.foo.java.srcDirs
+        sourceDirs += sourceSets.foo.java.srcDirs  //This makes IntelliJ compile for Consumer using FooApi but not Gradle
     }
 }
 
-
+configurations {
+    bar
+}
+//dependencies {
+//    compile files('src/foo/java')
+//}
 
 
 
